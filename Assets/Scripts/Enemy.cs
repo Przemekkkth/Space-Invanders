@@ -10,7 +10,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] float minTimeBetweenShots = 0.2f;
     [SerializeField] float maxTimeBetweenShots = 3f;
     [SerializeField] GameObject projectile;
-    [SerializeField] float projectileSpeed;
+    [SerializeField] float projectileSpeed = 10f;
     private void Start()
     {
         shotCounter = UnityEngine.Random.Range(minTimeBetweenShots, maxTimeBetweenShots);
@@ -33,11 +33,12 @@ public class Enemy : MonoBehaviour
     private void Fire()
     {
         GameObject projectileObject = Instantiate(projectile, transform.position, Quaternion.identity) as GameObject;
-        projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(0, -projectileSpeed);
+        projectileObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, -5);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        Debug.Log("OnTriggerEnter2D");
         if ( !collision.GetComponent<DamageDealer>() ) return;
         float damage = collision.GetComponent<DamageDealer>().GetDamage();
         health -= damage;
@@ -47,4 +48,5 @@ public class Enemy : MonoBehaviour
         }
         Destroy(collision.gameObject);
     }
+
 }

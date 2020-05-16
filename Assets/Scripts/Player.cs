@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
     [SerializeField] GameObject projectilePrefab;
     [SerializeField] float projectileSpeed = 10f;
     [SerializeField] float projectileFiringPeriod = 0.25f;
+    [Header("Player")]
+    [SerializeField] float health = 200f;
     Camera gameCamera;
     float padding;
     Coroutine firingCoroutine;
@@ -69,5 +71,17 @@ public class Player : MonoBehaviour
             projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(0, projectileSpeed);
             yield return new WaitForSeconds(projectileFiringPeriod);
         }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!collision.GetComponent<DamageDealer>()) return;
+        float damage = collision.GetComponent<DamageDealer>().GetDamage();
+        health -= damage;
+        if (health <= 0)
+        {
+            Destroy(gameObject);
+        }
+        Destroy(collision.gameObject);
     }
 }
