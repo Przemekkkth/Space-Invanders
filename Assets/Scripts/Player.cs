@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
 {
     [Header("Configuration parameters")]
     [SerializeField] float speed = 10f;
-    [SerializeField] float minPosX, maxPosX, minPosY, maxPosY;
+    float minPosX, maxPosX, minPosY, maxPosY;
     [Header("Projectile")]
     [SerializeField] GameObject projectilePrefab;
     [SerializeField] float projectileSpeed = 10f;
@@ -17,6 +17,11 @@ public class Player : MonoBehaviour
     Camera gameCamera;
     float padding;
     Coroutine firingCoroutine;
+    [SerializeField] AudioClip deathSound;
+    [SerializeField] [Range(0, 1)] float deathSoundVolume = 0.75f;
+    [SerializeField] AudioClip shootSound;
+    [SerializeField] [Range(0, 1)] float shootSoundVolume = 0.25f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -69,6 +74,7 @@ public class Player : MonoBehaviour
         {
             GameObject projectile = Instantiate(projectilePrefab, transform.position, transform.rotation) as GameObject;
             projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(0, projectileSpeed);
+            AudioSource.PlayClipAtPoint(shootSound, Camera.main.transform.position, shootSoundVolume);
             yield return new WaitForSeconds(projectileFiringPeriod);
         }
     }
@@ -80,8 +86,14 @@ public class Player : MonoBehaviour
         health -= damage;
         if (health <= 0)
         {
-            Destroy(gameObject);
+            Die();
         }
         Destroy(collision.gameObject);
+    }
+
+    private void Die()
+    {
+        Destroy(gameObject);
+        AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, deathSoundVolume);
     }
 }

@@ -11,6 +11,12 @@ public class Enemy : MonoBehaviour
     [SerializeField] float maxTimeBetweenShots = 3f;
     [SerializeField] GameObject projectile;
     [SerializeField] float projectileSpeed = 10f;
+    [SerializeField] GameObject deadVFX;
+    [SerializeField] float timeForDeadVFX = 1f;
+    [SerializeField] AudioClip deathSound;
+    [SerializeField] [Range(0, 1)] float deathSoundVolume = 0.75f;
+    [SerializeField] AudioClip shootSound;
+    [SerializeField] [Range(0, 1)] float shootSoundVolume = 0.25f;
     private void Start()
     {
         shotCounter = UnityEngine.Random.Range(minTimeBetweenShots, maxTimeBetweenShots);
@@ -34,6 +40,7 @@ public class Enemy : MonoBehaviour
     {
         GameObject projectileObject = Instantiate(projectile, transform.position, Quaternion.identity) as GameObject;
         projectileObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, -5);
+        AudioSource.PlayClipAtPoint(shootSound, Camera.main.transform.position, shootSoundVolume);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -44,9 +51,16 @@ public class Enemy : MonoBehaviour
         health -= damage;
         if( health <= 0)
         {
-            Destroy(gameObject);
+            Die();
         }
         Destroy(collision.gameObject);
     }
 
+    private void Die()
+    {
+        Destroy(gameObject);
+        GameObject explosion = Instantiate(deadVFX, transform.position, transform.rotation);
+        Destroy(explosion, timeForDeadVFX);
+        AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, deathSoundVolume);
+    }
 }
