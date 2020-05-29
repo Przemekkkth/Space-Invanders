@@ -95,5 +95,11 @@ public class Player : MonoBehaviour
     {
         Destroy(gameObject);
         AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, deathSoundVolume);
+        FindObjectOfType<Level>().LoadGameOver();
+    }
+
+    public float GetHealth()
+    {
+        return health;
     }
 }

@@ -17,6 +17,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] [Range(0, 1)] float deathSoundVolume = 0.75f;
     [SerializeField] AudioClip shootSound;
     [SerializeField] [Range(0, 1)] float shootSoundVolume = 0.25f;
+    [SerializeField] int score = 44;
     private void Start()
     {
         shotCounter = UnityEngine.Random.Range(minTimeBetweenShots, maxTimeBetweenShots);
@@ -45,7 +46,6 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("OnTriggerEnter2D");
         if ( !collision.GetComponent<DamageDealer>() ) return;
         float damage = collision.GetComponent<DamageDealer>().GetDamage();
         health -= damage;
@@ -62,5 +62,6 @@ public class Enemy : MonoBehaviour
         GameObject explosion = Instantiate(deadVFX, transform.position, transform.rotation);
         Destroy(explosion, timeForDeadVFX);
         AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, deathSoundVolume);
+        FindObjectOfType<GameSession>().AddToScore(score);
     }
 }
